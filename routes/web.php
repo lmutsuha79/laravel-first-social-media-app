@@ -17,6 +17,10 @@ use App\Http\Controllers\PostController;
 use App\Http\Controllers\UserController;
 
 Route::get('/', [UserController::class, "showCorrectHomePage"])->name('login');
+Route::get('/admin', function () {
+      return "only for admins";
+})->middleware('can:visitTheAdminPage');
+
 
 // User entre and exit Routes
 Route::post('/register', [UserController::class, "register"])->middleware('guest');
