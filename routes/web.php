@@ -22,10 +22,14 @@ Route::get('/admin', function () {
 })->middleware('can:visitTheAdminPage');
 
 
-// User entre and exit Routes
+// User related Routes
 Route::post('/register', [UserController::class, "register"])->middleware('guest');
 Route::post('/login', [UserController::class, "login"])->middleware('guest');
 Route::post('/logOut', [UserController::class, "logOut"])->middleware('auth');
+Route::get('/manage-avatar', [UserController::class, "showUploadAvatar"])->middleware('auth');
+Route::post('/manage-avatar', [UserController::class, "storeAvatar"])->middleware('auth');
+
+
 
 // Posts related Routes
 Route::get('/create-post', [PostController::class, "showCreatePost"])->middleware("auth");

@@ -4,7 +4,10 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rule;
+use Intervention\Image\Facades\Image;
 
 class UserController extends Controller
 {
@@ -19,7 +22,44 @@ class UserController extends Controller
     {
         $posts = $user->posts()->latest()->select('title', 'id', 'created_at')->get();
 
-        return view('profile-posts', ['username' => $user->username, 'posts' => $posts]);
+        return view('profile-posts', ['avatar' => $user->avatar, 'username' => $user->username, 'posts' => $posts]);
+    }
+    public function showUploadAvatar()
+    {
+        return view('manage-avatar');
+    }
+    public function storeAvatar(Request $request)
+    {
+        $user = auth()->user();
+        $request->validate(['avatar' => "required|image|max:3000"]);
+        $image = $request->file("avatar");
+
+
+        $imageData = Image::make($image)->resize("100", "100", function ($constraint) {
+            $constraint->aspectRatio();
+            $constraint->upsize();
+        })->encode("jpg");
+
+        $imageName = $user->username . '_' . 'avatar' . uniqid() . '.jpg';
+        Storage::put("public/avatars/$imageName", $imageData);
+        $oldAvatar = $user->avatar;
+        $user->avatar = $imageName;
+        // @ts-ignore
+        $user->save();
+
+        if ($oldAvatar != "/fallback-avatar.jpg") {
+
+            Storage::delete(str_replace("/storage/","public/",$oldAvatar));
+            // return " yes =+> $oldAvatar";
+        }
+        // return "no";
+
+        // $user = User::find(auth()->user()->id);
+        // $user->avatar = $imageName;
+        // $user->save();
+
+
+        return back()->with("successMessage", "you are successfully update your profile image");
     }
     public function login(Request $request)
     {
