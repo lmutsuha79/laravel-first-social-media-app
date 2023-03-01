@@ -3,13 +3,20 @@
         <h2>
             <img class="avatar-small" src="{{ $avatar }}" />
             {{ $username }}
-            <form class="ml-2 d-inline" action="#" method="POST">
-                @if ($username != auth()->user()->username)
-                    <button class="btn btn-primary btn-sm">Follow <i class="fas fa-user-plus"></i></button>
+            <form class="ml-2 d-inline" action="/follow/{{ $username }}" method="POST">
+                @csrf
+                {{-- show this btns only for auth users  --}}
+                @if(auth()->user() != null)
+                    {{-- follow btn --}}
+                    @if ($username != auth()->user()->username)
+                        <button class="btn btn-primary btn-sm">Follow <i class="fas fa-user-plus"></i></button>
+                    @endif
+                    {{-- upload avatar btn --}}
+                    @if ($username === auth()->user()->username)
+                        <a href="/manage-avatar" class="btn btn-secondary btn-sm">Upload Profile Photo</a>
+                    @endif
                 @endif
-                @if ($username === auth()->user()->username)
-                    <a href="/manage-avatar" class="btn btn-secondary btn-sm">Upload Profile Photo</a>
-                @endif
+
 
 
 

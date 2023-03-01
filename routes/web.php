@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\Route;
 |
 */
 use App\Http\Controllers\ExempleController;
+use App\Http\Controllers\FollowersController;
 use App\Http\Controllers\PostController;
 use App\Http\Controllers\UserController;
 
@@ -42,3 +43,6 @@ Route::put('/posts/edit/{post}', [PostController::class, "edditPost"])->middlewa
 
 // Profile related Routes
 Route::get('/profile/{user:username}', [UserController::class, "showProfile"]);
+
+// Follow Realtred Routes
+Route::post('/follow/{user:username}', [FollowersController::class, "addFollow"])->middleware("auth");
