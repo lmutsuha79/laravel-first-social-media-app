@@ -46,3 +46,4 @@ Route::get('/profile/{user:username}', [UserController::class, "showProfile"]);
 
 // Follow Realtred Routes
 Route::post('/follow/{user:username}', [FollowersController::class, "addFollow"])->middleware("auth");
+Route::post('/unfollow/{user:username}', [FollowersController::class, "removeFollow"])->middleware("auth");

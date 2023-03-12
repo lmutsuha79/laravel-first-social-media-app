@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Follow;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -21,8 +22,12 @@ class UserController extends Controller
     public function showProfile(User $user)
     {
         $posts = $user->posts()->latest()->select('title', 'id', 'created_at')->get();
+        $currentlyFollowing = Follow::where([
+            ['user_id', '=', auth()->user()->id],
+            ['followed_user', '=', $user->id]
+        ])->count();
 
-        return view('profile-posts', ['avatar' => $user->avatar, 'username' => $user->username, 'posts' => $posts]);
+        return view('profile-posts', ['avatar' => $user->avatar, 'username' => $user->username, 'posts' => $posts, 'currentlyFollowing' => $currentlyFollowing]);
     }
     public function showUploadAvatar()
     {
@@ -49,7 +54,7 @@ class UserController extends Controller
 
         if ($oldAvatar != "/fallback-avatar.jpg") {
 
-            Storage::delete(str_replace("/storage/","public/",$oldAvatar));
+            Storage::delete(str_replace("/storage/", "public/", $oldAvatar));
             // return " yes =+> $oldAvatar";
         }
         // return "no";
