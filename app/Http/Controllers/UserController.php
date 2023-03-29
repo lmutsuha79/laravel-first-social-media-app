@@ -26,8 +26,12 @@ class UserController extends Controller
             ['user_id', '=', auth()->user()->id],
             ['followed_user', '=', $user->id]
         ])->count();
+        $numberOfFollowers = Follow::count();
+        $numberOfFollowing = Follow::where([
+            ['user_id', '=', $user->id]
+        ])->count();
 
-        return view('profile-posts', ['avatar' => $user->avatar, 'username' => $user->username, 'posts' => $posts, 'currentlyFollowing' => $currentlyFollowing]);
+        return view('profile-posts', ['avatar' => $user->avatar, 'username' => $user->username, 'posts' => $posts, 'currentlyFollowing' => $currentlyFollowing, 'numberOfFollowers' => $numberOfFollowers, 'numberOfFollowing' => $numberOfFollowing]);
     }
     public function showUploadAvatar()
     {
