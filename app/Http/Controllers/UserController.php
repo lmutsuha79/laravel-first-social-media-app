@@ -2,13 +2,15 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Follow;
 use App\Models\User;
+use App\Models\Follow;
+use App\Models\Post;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rule;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\View;
 use Intervention\Image\Facades\Image;
+use Illuminate\Support\Facades\Storage;
 
 class UserController extends Controller
 {
@@ -19,20 +21,50 @@ class UserController extends Controller
         }
         return view("homePageGuest");
     }
-    public function showProfile(User $user)
+    private function getProfileData($user)
     {
-        $posts = $user->posts()->latest()->select('title', 'id', 'created_at')->get();
         $currentlyFollowing = Follow::where([
             ['user_id', '=', auth()->user()->id],
             ['followed_user', '=', $user->id]
         ])->count();
-        $numberOfFollowers = Follow::count();
-        $numberOfFollowing = Follow::where([
-            ['user_id', '=', $user->id]
-        ])->count();
-
-        return view('profile-posts', ['avatar' => $user->avatar, 'username' => $user->username, 'posts' => $posts, 'currentlyFollowing' => $currentlyFollowing, 'numberOfFollowers' => $numberOfFollowers, 'numberOfFollowing' => $numberOfFollowing]);
+        $numberOfFollowers = $user->followers->count();
+        $numberOfPosts = $user->posts->count();
+        $numberOfFollowing = $user->following->count();
+        View::share(
+            'sharedData',
+            [
+                'avatar' => $user->avatar,
+                'username' => $user->username,
+                'numberOfFollowers' => $numberOfFollowers,
+                'numberOfFollowing' => $numberOfFollowing,
+                'currentlyFollowing' => $currentlyFollowing,
+                'numberOfPosts' => $numberOfPosts
+            ]
+        );
     }
+    public function showProfile(User $user)
+    {
+        $this->getProfileData($user);
+        $posts = $user->posts()->latest()->select('title', 'id', 'created_at')->get();
+
+
+        return view('profile-posts', ['posts' => $posts]);
+    }
+    public function showProfileFollowers(User $user)
+    {
+        $this->getProfileData($user);
+        $followers = $user->followers()->latest()->get();
+        return view('profile-followers', ['followers' => $followers]);
+    }
+
+
+    public function showProfileFollowing(User $user)
+    {
+        $this->getProfileData($user);
+        $followingList = $user->following()->latest()->get();
+        return view('profile-following', ['following' => $followingList]);
+    }
+
     public function showUploadAvatar()
     {
         return view('manage-avatar');

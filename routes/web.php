@@ -43,6 +43,9 @@ Route::put('/posts/edit/{post}', [PostController::class, "edditPost"])->middlewa
 
 // Profile related Routes
 Route::get('/profile/{user:username}', [UserController::class, "showProfile"]);
+Route::get('/profile/{user:username}/followers', [UserController::class, "showProfileFollowers"]);
+Route::get('/profile/{user:username}/following', [UserController::class, "showProfileFollowing"]);
+
 
 // Follow Realtred Routes
 Route::post('/follow/{user:username}', [FollowersController::class, "addFollow"])->middleware("auth");

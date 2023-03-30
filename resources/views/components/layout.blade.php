@@ -29,10 +29,9 @@
                     <span class="text-white mr-2 header-chat-icon" title="Chat" data-toggle="tooltip"
                         data-placement="bottom"><i class="fas fa-comment"></i></span>
 
-                        <a href="/profile/{{ auth()->user()->username }}" class="mr-2"><img title="{{auth()->user()->username}} profile"
-                                data-toggle="tooltip" data-placement="bottom"
-                                style="width: 32px; height: 32px; border-radius: 16px"
-                                src="{{ auth()->user()->avatar }}" /></a>
+                    <a href="/profile/{{ auth()->user()->username }}" class="mr-2"><img
+                            title="{{ auth()->user()->username }} profile" data-toggle="tooltip" data-placement="bottom"
+                            style="width: 32px; height: 32px; border-radius: 16px" src="{{ auth()->user()->avatar }}" /></a>
                     <a class="btn btn-sm btn-success mr-2" href="/create-post">Create Post</a>
                     <form action="/logOut" method="POST" class="d-inline">
                         @csrf
@@ -76,6 +75,8 @@
             </div>
         @endif
     </div>
+
+
     {{ $slot }}
 
     <!-- footer begins -->

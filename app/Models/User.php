@@ -47,12 +47,15 @@ class User extends Authenticatable
     {
         return $this->hasMany(Post::class, 'user_id');
     }
-    // protected function avatar(): Attribute
-    // {
-    //     return Attribute::make(get: function ($value) {
-    //         return $value ? "/storage/avatars/$value" : "/fallback-avatar.jpg";
-    //     });
-    // }
+    public function followers()
+    {
+        return $this->hasMany(Follow::class, 'followed_user');
+    }
+    public function following()
+    {
+        return $this->hasMany(Follow::class, 'user_id');
+    }
+
     public function getAvatarAttribute($value)
     {
         return $value ? "/storage/avatars/$value" : "/fallback-avatar.jpg";
